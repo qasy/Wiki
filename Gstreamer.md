@@ -1,3 +1,4 @@
+## Вспомогательные вещи ##
 Для просмотра характеристик подключенных камер используется **v4l2-ctl**:  
   >**v4l2-ctl --list-devices** (просмотр всех доступных устройств)  
   >**v4l2-ctl --device=/dev/video0 --list-formats-ext** (Просмотр информации о конкретном устройстве (разрешение и FPS))  
@@ -9,11 +10,16 @@
 Для просмотра характеристик плагина:  
   >**gst-inspect-1.0 v4l2src** (v4l2src название плагина для примера, если он есть)
 
+## Примитивное отображение информации ##
 Для просмотра напрямую на экране (даже без графической оболочки Linux)  
  - Для первой камеры из стереопары  
 >**DISPLAY=:0.0 gst-launch-1.0 nvarguscamerasrc sensor-id=0 ! 'video/x-raw(memory:NVMM), width=3280, height=2464, format=(string)NV12, framerate=(fraction)20/1' ! nvoverlaysink -e**  
  - Для второй камеры из стереопары  
 >**DISPLAY=:0.0 gst-launch-1.0 nvarguscamerasrc sensor-id=1 ! 'video/x-raw(memory:NVMM), width=3280, height=2464, format=(string)NV12, framerate=(fraction)20/1' ! nvoverlaysink -e**
+
+## Примеры пайплайнов для разных ситуаций: ##
+В пайплайнах важно соблюдать последовательность плагинов. Для преобразование формата пикселей нужно использовать конвертеры **videoconvert** или **nvvidconv"** или другие, причем нужно указывать **capabilities** между ними и максимально подробно (причем обращать внимание на кавычки, если вдруг используются скобки), например:   
+>**video/x-raw(memory:NVMM), width=640, height=480, format=(string)NV12, framerate=60/1**
 
 ### Передача по UDP (на джетсоне)  
 **sensor-id=0** указывает номер устройства /dev/video0  
@@ -34,6 +40,14 @@
 (так вроде тоже работает)  
 >**gst-launch-1.0 nvarguscamerasrc sensor-id=0 ! 'video/x-raw(memory:NVMM), width=640, height=480, format=(string)NV12, framerate=60/1' ! nvvidconv flip-method=3 ! 'video/x-raw(memory:NVMM), format=I420' ! omxh264enc ! udpsink clients=192.168.223.95:5001 sync=false**
 
+### Данные "КАМЕРА -> КОД OpenCV"
+>**VideoCapture cam0("nvarguscamerasrc sensor-id=0 ! video/x-raw(memory:NVMM), width=1280, height=720, format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv flip-method=0 ! video/x-raw, width=1280, height=720, format=(string)BGRx, framerate=(fraction)30/1 ! videoconvert !video/x-raw, width=1280, height=720, format=(string)BGR, framerate=(fraction)30/1 ! appsink sync=false", CAP_GSTREAMER);**
+
+### Данные "КОД OpenCV -> ВЫВОД НА ЭКРАН"
+ideoWriter cam_out("appsrc ! video/x-raw, width=1280, height=720, format=(string)BGR, framerate=30/1 ! videoconvert ! video/x-raw, width=1280, height=720, format=(string)BGRx, framerate=30/1 ! nvvidconv flip-method=0 ! video/x-raw(memory:NVMM), width=1280, height=720, format=(string)NV12, framerate=(fraction)30/1 ! nvoverlaysink sync=false" , CAP_GSTREAMER, 30, Size(1280, 720), true); 
+
+
+## Для дебага ##
 Для использование дебагера gstreamer необходимо установить значение **GST_DEBUG**:  
 Возможные значение:  
 >0 | none    | No debug information is output.  

@@ -44,26 +44,27 @@
 >**VideoCapture cam0("nvarguscamerasrc sensor-id=0 ! video/x-raw(memory:NVMM), width=1280, height=720, format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv flip-method=0 ! video/x-raw, width=1280, height=720, format=(string)BGRx, framerate=(fraction)30/1 ! videoconvert !video/x-raw, width=1280, height=720, format=(string)BGR, framerate=(fraction)30/1 ! appsink sync=false", CAP_GSTREAMER);**
 
 ### Данные "КОД OpenCV -> ВЫВОД НА ЭКРАН"
-ideoWriter cam_out("appsrc ! video/x-raw, width=1280, height=720, format=(string)BGR, framerate=30/1 ! videoconvert ! video/x-raw, width=1280, height=720, format=(string)BGRx, framerate=30/1 ! nvvidconv flip-method=0 ! video/x-raw(memory:NVMM), width=1280, height=720, format=(string)NV12, framerate=(fraction)30/1 ! nvoverlaysink sync=false" , CAP_GSTREAMER, 30, Size(1280, 720), true); 
+>**VideoWriter cam_out("appsrc ! video/x-raw, width=1280, height=720, format=(string)BGR, framerate=30/1 ! videoconvert ! video/x-raw, width=1280, height=720, format=(string)BGRx, framerate=30/1 ! nvvidconv flip-method=0 ! video/x-raw(memory:NVMM), width=1280, height=720, format=(string)NV12, framerate=(fraction)30/1 ! nvoverlaysink sync=false" , CAP_GSTREAMER, 30, Size(1280, 720), true);**
 
 
 ## Для дебага ##
 Для использование дебагера gstreamer необходимо установить значение **GST_DEBUG**:  
 Возможные значение:  
->0 | none    | No debug information is output.  
->1 | ERROR   | Logs all fatal errors. These are errors that do not allow the core or elements to perform the requested action. The application can still recover if programmed to handle the conditions that triggered the error.  
->2 | WARNING | Logs all warnings. Typically these are non-fatal, but user-visible problems are expected to happen.  
->3 | FIXME   | Logs all "fixme" messages. Those typically that a codepath that is known to be incomplete has been triggered. It may work in most cases, but may cause problems in specific instances.  
->4 | INFO    | Logs all informational messages. These are typically used for events in the system that only happen once, or are important and rare enough to be logged at this level.  
->5 | DEBUG   | Logs all debug messages. These are general debug messages for events that happen only a limited number of times during an object's lifetime; these include setup, teardown, change of parameters, etc.  
->6 | LOG     | Logs all log messages. These are messages for events that happen repeatedly during an object's lifetime; these include streaming and steady-state conditions. This is used for log messages that happen on every buffer in an element for example.  
->7 | TRACE   | Logs all trace messages. Those are message that happen very very often. This is for example is each time the reference count of a GstMiniObject, such as a GstBuffer or GstEvent, is modified.  
->8 | MEMDUMP | Logs all memory dump messages. This is the heaviest logging and may include dumping the content of blocks of memory.  
+> - 0 | none    | No debug information is output.  
+> - 1 | ERROR   | Logs all fatal errors. These are errors that do not allow the core or elements to perform the requested action. The application can still recover if programmed to handle the conditions that triggered the error.  
+> - 2 | WARNING | Logs all warnings. Typically these are non-fatal, but user-visible problems are expected to happen.  
+> - 3 | FIXME   | Logs all "fixme" messages. Those typically that a codepath that is known to be incomplete has been triggered. It may work in most cases, but may cause problems in specific instances.  
+> - 4 | INFO    | Logs all informational messages. These are typically used for events in the system that only happen once, or are important and rare enough to be logged at this level.  
+> - 5 | DEBUG   | Logs all debug messages. These are general debug messages for events that happen only a limited number of times during an object's lifetime; these include setup, teardown, change of parameters, etc.  
+> - 6 | LOG     | Logs all log messages. These are messages for events that happen repeatedly during an object's lifetime; these include streaming and steady-state conditions. This is used for log messages that happen on every buffer in an element for example.  
+> - 7 | TRACE   | Logs all trace messages. Those are message that happen very very often. This is for example is each time the reference count of a GstMiniObject, such as a GstBuffer or GstEvent, is modified.  
+> - 8 | MEMDUMP | Logs all memory dump messages. This is the heaviest logging and may include dumping the content of blocks of memory.  
 
 Устанавливается с помощью команды:
 >**export GST_DEBUG="*:4"**  
 
-Торможение картинки при отображении может быть связано с тем, что у используемого плагина: (я столкнулся при использовании **nvoverlaysink**) должно быть выставлено значение свойства **sync=false**, еще такое свойство есть у **appsink**.
+## ТОНКОСТИ ##
+ - Торможение картинки при отображении может быть связано с тем, что у используемого плагина: (я столкнулся при использовании **nvoverlaysink**) должно быть выставлено значение свойства **sync=false**, еще такое свойство есть у **appsink**.
 
 
 

@@ -40,7 +40,8 @@
 (так вроде тоже работает)  
 >**gst-launch-1.0 nvarguscamerasrc sensor-id=0 ! 'video/x-raw(memory:NVMM), width=640, height=480, format=(string)NV12, framerate=60/1' ! nvvidconv flip-method=3 ! 'video/x-raw(memory:NVMM), format=I420' ! omxh264enc ! udpsink clients=192.168.223.95:5001 sync=false**
 
-### Данные "КАМЕРА -> КОД OpenCV"
+### Данные "КАМЕРА -> КОД OpenCV"  
+**flip-method=3** поворачивает картинку
 >**VideoCapture cam0("nvarguscamerasrc sensor-id=0 ! video/x-raw(memory:NVMM), width=1280, height=720, format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv flip-method=0 ! video/x-raw, width=1280, height=720, format=(string)BGRx, framerate=(fraction)30/1 ! videoconvert !video/x-raw, width=1280, height=720, format=(string)BGR, framerate=(fraction)30/1 ! appsink sync=false", CAP_GSTREAMER);**
 
 ### Данные "КОД OpenCV -> ВЫВОД НА ЭКРАН"

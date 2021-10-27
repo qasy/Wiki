@@ -3,6 +3,12 @@
   >**v4l2-ctl --device=/dev/video0 --list-formats-ext** (Просмотр информации о конкретном устройстве (разрешение и FPS))  
   >**v4l2-ctl -d0 --list-formats-ext -w** (Показывает больше информации чем предыдущая команда, (-d0 более кратко))  
 
+Для проверки наличия плагина на данном устройстве используйте:  
+  >**gst-inspect-1.0 | grep h264** (h264 кусок ключевого слова для примера)  
+
+Для просмотра характеристик плагина:  
+  >**gst-inspect-1.0 v4l2src** (v4l2src название плагина для примера, если он есть)
+
 Для просмотра напрямую на экране (даже без графической оболочки Linux)  
  - Для первой камеры из стереопары  
 >**DISPLAY=:0.0 gst-launch-1.0 nvarguscamerasrc sensor-id=0 ! 'video/x-raw(memory:NVMM), width=3280, height=2464, format=(string)NV12, framerate=(fraction)20/1' ! nvoverlaysink -e**  

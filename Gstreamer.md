@@ -1,4 +1,7 @@
 ## Вспомогательные вещи ##
+Пайплайны для gstreamer на джетсон нано  
+>https://developer.ridgerun.com/wiki/index.php?title=Category:JetsonNano
+
 Для просмотра характеристик подключенных камер используется **v4l2-ctl**:  
   >**v4l2-ctl --list-devices** (просмотр всех доступных устройств)  
   >**v4l2-ctl --device=/dev/video0 --list-formats-ext** (Просмотр информации о конкретном устройстве (разрешение и FPS))  
@@ -68,6 +71,21 @@
  - использование плагинов с приставкой **nv** позволяет добиться большей производительности, поскольку вычисления происходят где-то в своей NVMM памяти  
  - Торможение картинки при отображении может быть связано с тем, что у используемого плагина: (я столкнулся при использовании **nvoverlaysink**) должно быть выставлено значение свойства **sync=false**, еще такое свойство есть у **appsink**.  
  - **nvvidconv** копирует из памяти NVMM в память процессора, если слева от него в конвейере **video/x-raw(memory:NVMM)**, а справа просто **video/x-raw**
+ >#!/bin/bash
+DEC="application/x-rtp, encoding-name=(string)H264, payload=(int)96 ! rtph264depay ! decodebin ! videoconvert ! queue"
+gst-launch-1.0 -ve compositor name=comp \
+sink_0::width=360 sink_0::height=640 sink_0::xpos=0 \
+sink_1::width=360 sink_1::height=640 sink_1::xpos=360 \
+sink_2::width=360 sink_2::height=640 sink_2::xpos=720 \
+sink_3::width=360 sink_3::height=640 sink_3::xpos=1080 \
+! videoconvert ! autovideosink \
+udpsrc port=15100 ! $DEC ! comp.sink_0 \
+udpsrc port=15121 ! $DEC ! comp.sink_1 \
+udpsrc port=15120 ! $DEC ! comp.sink_2 \
+udpsrc port=15101 ! $DEC ! comp.sink_3
+Внимание! На jetson следует заменить compositor -> nvcompositor 
+Это же касается jprgenc -> nvjpeпenc etc...
+
  - **nvcompositor** позволяет брать изображения сразу с нескольких источников и отправлять тоже куда-то в несколько, делать преобразования размера изображений, или обрезать их и всякое такое
 
 

@@ -89,5 +89,18 @@ udpsrc port=15101 ! $DEC ! comp.sink_3
  - **nvcompositor** позволяет брать изображения сразу с нескольких источников и отправлять тоже куда-то в несколько, делать преобразования размера изображений, или обрезать их и всякое такое
 
 
+For anyone that comes onto this page, this is my current solution:
+MIPI CSI pipeline =
+nvarguscamerasrc sensor_id=ID ! video/x-raw(memory:NVMM), width=X, height=Y, format=(string)NV12 ! nvvidconv flip-method=M ! video/x-raw, format=I420, appsink max-buffers=1 drop=true
 
+and UVC pipeline =
+v4l2src device=dev ! image/jpeg, width=X, height=Y ! jpegparse ! jpegdec ! nvvidconv flip-method=M ! video/x-raw, format=I420 ! appsink max-buffers=1 drop=true
+
+One optimization is the appsink options: max-buffers=1 and drop=true. These remove an application queuing delay to a good amount.
+
+One other optimization is using format=I420, rather than using BGRx and converting to BGR in vidconv. In my application I would only process the frames after I had grabbed them from all cameras. vidconv is slow because it runs on the CPU. This delay ended up delaying the pipeline. So I use I420 which is supported in nvvidconv and OpenCV. I only use cv::VideoCapture’s grab() function. I use retrieve() later when processing the last frame and I will use cv::cvtColor(image, _image, cv::COLOR_YUV2BGR_I420) so that I can use the frames in BGR as OpenCV needs.
+
+Later on, I am hoping to add nvv4l2decoder, once r32.4.3 is released. @DaneLLL, do you know when r32.4.3 will be released? I noticed r32.4.2b was recently added but I’m guessing that doesn’t have the nvv4l2decoder fix.
+
+In order to get the appropriate image I need, I am using 4 grab() calls to these pipelines. Originally, I was using 7-12 grabs() and it was a mess. This method is much faster and I will update this thread if I find more optimized pipelines for this use case that uses two MIPI CSI and two UVC cameras for instant captures.
 

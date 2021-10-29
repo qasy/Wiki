@@ -50,6 +50,9 @@
 ### Данные "КОД OpenCV -> ВЫВОД НА ЭКРАН"
 >**VideoWriter cam_out("appsrc ! video/x-raw, width=1280, height=720, format=(string)BGR, framerate=30/1 ! videoconvert ! video/x-raw, width=1280, height=720, format=(string)BGRx, framerate=30/1 ! nvvidconv flip-method=0 ! video/x-raw(memory:NVMM), width=1280, height=720, format=(string)NV12, framerate=(fraction)30/1 ! nvoverlaysink sync=false" , CAP_GSTREAMER, 30, Size(1280, 720), true);**
 
+### К следующему пункту, запихивает из камеры в код:  
+>**"nvarguscamerasrc sensor-id=0 ! video/x-raw(memory:NVMM), width=1280, height=720, format=(string)NV12, framerate=60/1 ! nvvidconv flip-method=0 ! video/x-raw, width=1280, height=720, format=(string)BGRx, framerate=60/1 ! videoconvert ! video/x-raw, width=1280, height=720, format=(string)BGR, framerate=60/1 ! appsink sync=false"**
+
 ### Передача из кода OpenCV -> UDP sink ###
 >**"appsrc ! video/x-raw, width=1280, height=720, format=(string)BGR ! videoconvert ! video/x-raw, format=(string)BGRx ! nvvidconv flip-method=0 ! nvjpegenc quality=20 ! rtpjpegpay ! udpsink host=192.168.223.77 port=5000"**  
 

@@ -50,6 +50,12 @@
 ### Данные "КОД OpenCV -> ВЫВОД НА ЭКРАН"
 >**VideoWriter cam_out("appsrc ! video/x-raw, width=1280, height=720, format=(string)BGR, framerate=30/1 ! videoconvert ! video/x-raw, width=1280, height=720, format=(string)BGRx, framerate=30/1 ! nvvidconv flip-method=0 ! video/x-raw(memory:NVMM), width=1280, height=720, format=(string)NV12, framerate=(fraction)30/1 ! nvoverlaysink sync=false" , CAP_GSTREAMER, 30, Size(1280, 720), true);**
 
+### Передача из кода OpenCV -> UDP sink ###
+>**"appsrc ! video/x-raw, width=1280, height=720, format=(string)BGR ! videoconvert ! video/x-raw, format=(string)BGRx ! nvvidconv flip-method=0 ! nvjpegenc quality=20 ! rtpjpegpay ! udpsink host=192.168.223.77 port=5000"**  
+
+### Прием из UDP src -> на экран монитора ноутбука###  
+>**gst-launch-1.0 udpsrc port=5000 ! application/x-rtp, media=video, clock-rate=90000, encoding-name=JPEG, payload=96 ! rtpjpegdepay ! jpegdec ! videoconvert ! xvimagesink**
+
 
 ## Для дебага ##
 Для использование дебагера gstreamer необходимо установить значение **GST_DEBUG**:  

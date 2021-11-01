@@ -68,6 +68,15 @@ Accelerated GStreamer (какие-то примеры пайплайнов от 
 ### Прием из UDP src -> на экран монитора ноутбука###  
 >**gst-launch-1.0 udpsrc port=5000 ! application/x-rtp, media=video, clock-rate=90000, encoding-name=JPEG, payload=96 ! rtpjpegdepay ! jpegdec ! videoconvert ! xvimagesink**
 
+### Отправка на экран и по UDP с энкодером H264 
+>gst-launch-1.0 nvarguscamerasrc ! \  
+'video/x-raw(memory:NVMM),width=1280, height=720, framerate=30/1, format=NV12' ! \  
+tee name=t \  
+t. ! queue ! nvoverlaysink sync=false \  
+t. ! queue ! omxh264enc insert-sps-pps=true bitrate=16000000 ! \  
+rtph264pay ! \  
+udpsink port=5000 host=192.168.223.77  
+
 ### Объединение двух камер через **nvcompositor** и передача в код OpenCV ###
 >std::string gst_capture = "nvarguscamerasrc sensor-id=0 ! \
                                 video/x-raw(memory:NVMM),width=1280, height=720, framerate=30/1, format=NV12 ! \  

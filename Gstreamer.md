@@ -69,6 +69,32 @@ Accelerated GStreamer (какие-то примеры пайплайнов от 
 >**gst-launch-1.0 udpsrc port=5000 ! application/x-rtp, media=video, clock-rate=90000, encoding-name=JPEG, payload=96 ! rtpjpegdepay ! jpegdec ! videoconvert ! xvimagesink**
 
 
+### Объединение двух камер через **nvcompositor**, H264 и отправка по UDP ###
+nvarguscamerasrc sensor-id=0 ! \
+'video/x-raw(memory:NVMM),width=1280, height=720, framerate=30/1, format=NV12' ! \
+comp. \
+nvarguscamerasrc sensor-id=1 ! \
+'video/x-raw(memory:NVMM),width=1280, height=720, framerate=30/1, format=NV12' ! \
+comp. \
+nvcompositor name=comp \
+sink_0::xpos=0 sink_0::ypos=0 sink_0::width=1280 sink_0::height=720 \
+sink_1::xpos=1280 sink_1::ypos=0 sink_1::width=1280 sink_1::height=720 ! \
+'video/x-raw(memory:NVMM),width=2560, height=720' ! \
+nvvidconv ! \
+omxh264enc insert-sps-pps=true bitrate=16000000 ! \
+rtph264pay ! \
+udpsink port=5000 host=192.168.223.77
+
+### Прием по UDP на ноутбуке закодированного H264 двойного изображения с Jetson'a
+gst-launch-1.0 -v udpsrc port=5000 ! \  
+"application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264, payload=(int)96" ! \
+rtph264depay ! \
+h264parse ! \
+avdec_h264 ! \
+videoconvert ! \
+xvimagesink
+
+
 ## Для дебага ##
 Для использование дебагера gstreamer необходимо установить значение **GST_DEBUG**:  
 Возможные значение:  

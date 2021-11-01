@@ -1,6 +1,11 @@
 ## Вспомогательные вещи ##
+Accelerated GStreamer (какие-то примеры пайплайнов от nvidia)
+>https://docs.nvidia.com/jetson/l4t/index.html#page/Tegra%20Linux%20Driver%20Package%20Development%20Guide/accelerated_gstreamer.html#  
+
 Пайплайны для gstreamer на джетсон нано  
 >https://developer.ridgerun.com/wiki/index.php?title=Category:JetsonNano
+
+
 
 Для просмотра характеристик подключенных камер используется **v4l2-ctl**:  
   >**v4l2-ctl --list-devices** (просмотр всех доступных устройств)  

@@ -4,6 +4,7 @@ Accelerated GStreamer (какие-то примеры пайплайнов от 
 
 Еще пайплайны  
 >https://gist.github.com/hum4n0id/cda96fb07a34300cdb2c0e314c14df0a  
+>https://github.com/mad4ms/python-opencv-gstreamer-examples
 
 Пайплайны для gstreamer на джетсон нано  
 >https://developer.ridgerun.com/wiki/index.php?title=Category:JetsonNano

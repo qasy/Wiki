@@ -2,6 +2,9 @@
 Accelerated GStreamer (какие-то примеры пайплайнов от nvidia)
 >https://docs.nvidia.com/jetson/l4t/index.html#page/Tegra%20Linux%20Driver%20Package%20Development%20Guide/accelerated_gstreamer.html#  
 
+Еще пайплайны  
+>https://gist.github.com/hum4n0id/cda96fb07a34300cdb2c0e314c14df0a  
+
 Пайплайны для gstreamer на джетсон нано  
 >https://developer.ridgerun.com/wiki/index.php?title=Category:JetsonNano
 

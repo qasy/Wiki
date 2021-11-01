@@ -77,6 +77,21 @@ t. ! queue ! omxh264enc insert-sps-pps=true bitrate=16000000 ! \
 rtph264pay ! \  
 udpsink port=5000 host=192.168.223.77  
 
+### Отправка из кода OpenCV по UDP с энкодером H264  
+>std::string gst_writer = "appsrc ! \  
+                                videoconvert ! \  
+                                nvvidconv flip-method=0 ! \  
+                                video/x-raw(memory:NVMM), width=2560, height=720 ! \  
+                                tee name=t \  
+                                t. ! queue ! \  
+                                nvoverlaysink sync=false \  
+                                t. ! queue ! \  
+                                nvv4l2h264enc insert-sps-pps=true ! \  
+                                h264parse ! \  
+                                rtph264pay pt=96 ! \  
+                                udpsink host=192.168.223.77 port=5000 sync=false -e";  
+>VideoWriter cam_out(gst_writer, CAP_GSTREAMER, 30, Size(2560, 720), true); 
+
 ### Объединение двух камер через **nvcompositor** и передача в код OpenCV ###
 >std::string gst_capture = "nvarguscamerasrc sensor-id=0 ! \
                                 video/x-raw(memory:NVMM),width=1280, height=720, framerate=30/1, format=NV12 ! \  

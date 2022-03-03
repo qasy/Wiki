@@ -102,6 +102,7 @@ mkdir build
 cd build
 # df -h: Used 11 / Avail 2.5
 
+# ИЗМЕНИТЬ OPENCV_EXTRA_MODULES_PATH на подходящий
 # Возвращаемся к opencv
 cmake \
 -D CMAKE_BUILD_TYPE=RELEASE \

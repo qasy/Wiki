@@ -9,14 +9,16 @@ Accelerated GStreamer (какие-то примеры пайплайнов от 
 Пайплайны для gstreamer на джетсон нано  
 >https://developer.ridgerun.com/wiki/index.php?title=Category:JetsonNano
 
-SEND XAVIER (лучше качество):
+### SEND XAVIER (лучше качество):  ###
 gst-launch-1.0 nvarguscamerasrc sensor-mode=0 ! 'video/x-raw(memory:NVMM),width=1920, height=1080, framerate=30/1, format=NV12' ! nvvidconv flip-method=0 ! omxh264enc insert-sps-pps=true bitrate=16000000 ! rtph264pay ! udpsink port=5000 host=192.168.223.94
 
-SEND XAVIER:
+### SEND XAVIER:   ###
 ./video-viewer --input-flip=horizontal --input-width=1920 --input-height=1080 --bitrate=1600000 csi://0 rtp://192.168.223.94:5000
 
-RECEIVE NANO:
-./video-viewer --input-codec=H264 rtp://192.168.223.94:5000
+### RECEIVE NANO:  ###
+./video-viewer --input-codec=H264 rtp://192.168.223.94:5000  
+  
+-------------------------------------------------------------------------
 
 
 Для просмотра характеристик подключенных камер используется **v4l2-ctl**:  

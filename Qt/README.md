@@ -149,7 +149,7 @@ sudo make install (*необязательно, если выбрали флаг
 
 <a name="qt-using"></a>
 ## 3. Использование Qt5 в проектах на основе CMake
-URL: https://doc.qt.io/qt-5/cmake-get-started.html#build-a-gui-executable  
+**URL**: https://doc.qt.io/qt-5/cmake-manual.html  
 Для того, чтобы использовать библиотеку в проектах на основе **CMake**, нужно сообщить CMake информацию о том, где билиотека находится. Так как если CMake ничего не знает о местоположении данной установленной библиотеки, то при попытке использовании команды:  
 ```
 find_package(Qt5 COMPONENTS Widgets REQUIRED)  

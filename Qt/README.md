@@ -8,7 +8,7 @@
 1.3. [Получение исходного кода подмодулей](#get-submodule-source-code)  
 2. [Конфигурирование и сборка](#configuring-and-building)  
 2.1. [Очистка древа и получение обновлений](#clean-tree)
-3. [Использование в проектах](#qt-using)
+3. [Использование Qt5 в проектах на основе CMake](#qt-using)
 4. [Приложение А: Опции конфигурации Qt](#qt-configure-options)
 
 На всякий случай здесь представлены все версии:  
@@ -148,19 +148,48 @@ sudo make install (*необязательно, если выбрали флаг
 Это можно уточнить в официальном руководстве **https://wiki.qt.io/Building_Qt_5_from_Git** 
 
 <a name="qt-using"></a>
-## 3. Использование в проектах
-Затем, чтобы использовать библиотеку в своих проектах, если проект собирается с помощью CMake, то в файле CMakeLists.txt проекта необходимо указать   
->set(CMAKE_PREFIX_PATH "/home/aleksey/qt5/qtbase/lib/cmake/Qt5")  
-  
-Где указанный путь, это путь к директории, где находится файл **Qt5Config.cmake** или **qt5-config.cmake**  
-
-Например:  
+## 3. Использование Qt5 в проектах на основе CMake
+Для того, чтобы использовать библиотеку в проектах на основе **CMake**, нужно сообщить CMake информацию о том, где билиотека находится. Так как если CMake ничего не знает о местоположении данной установленной библиотеки, то при попытке использовании команды:  
 ```
-set(CMAKE_PREFIX_PATH "/home/aleksey/qt5/qtbase/lib/cmake/Qt5")  
 find_package(Qt5 COMPONENTS Widgets REQUIRED)  
-add_executable(Main main.cpp)  
-target_link_libraries(Main Qt5::Widgets)  
 ```
+Вылезет ошибка, что:  
+```
+CMake Error at CMakeLists.txt:14 (find_package):
+  By not providing "FindQt5.cmake" in CMAKE_MODULE_PATH this project has
+  asked CMake to find a package configuration file provided by "Qt5", but
+  CMake did not find one.
+
+  Could not find a package configuration file provided by "Qt5" with any of
+  the following names:
+
+    Qt5Config.cmake
+    qt5-config.cmake
+
+  Add the installation prefix of "Qt5" to CMAKE_PREFIX_PATH or set "Qt5_DIR"
+  to a directory containing one of the above files.  If "Qt5" provides a
+  separate development package or SDK, be sure it has been installed.
+```
+
+Эта ошибка дает нам информацию,о том, что нужно для корректной работы. Для этого CMake просит передать ему путь к какому-либо из файлов **Qt5Config.cmake** или **qt5-config.cmake**, в которых он может найти необходимую информацию о собранном Qt5. Один из этих файлов нужно постараться найти где-то в каталогах, куда была установлена библиотека Qt5. Выше, в данном руководстве упоминалось, что путь установки в данном случае **/usr/local/Qt-5.12.12**. Следовательно, искать данные файлы нужно здесь. После успешного поиска файла, необходимо сообщить CMake путь к директории, где данный файл лежит (например, путь к файлу: *"/usr/local/Qt-5.12.12/lib/cmake/Qt5/Qt5Config.cmake"*). Это можно сделать с помощью команды:  
+```
+set(CMAKE_PREFIX_PATH "/usr/local/Qt-5.12.12/lib/cmake/Qt5")  
+```
+После этого, команда **find_package(Qt5 COMPONENTS Widgets REQUIRED)** должна успешно найти всю информацию о нашей библиотеке. Останется только прилинковать нужные нам компоненты. Пример простейшего **CMakeLists.txt** для данного случая представлен ниже:  
+```
+cmake_minimum_required(VERSION 3.10)
+
+project(Project LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# build App
+set(CMAKE_PREFIX_PATH "/usr/local/Qt-5.12.12/lib/cmake/Qt5")
+find_package(Qt5 COMPONENTS Widgets Charts REQUIRED)
+add_executable(App main.cpp)
+target_link_libraries(App Qt5::Widgets Qt5::Charts)
+```
+
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
 <a name="qt-configure-options"></a>
